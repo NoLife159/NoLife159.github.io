@@ -41,8 +41,8 @@
       
       scene.add(new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1));
 
-      // เปลี่ยนมาโหลดโมเดล RoBot3.glb ตามที่ต้องการ
-      const gltf = await new GLTFLoader().loadAsync('./RoBot3.glb');
+      // โหลดโมเดล RoBot.glb
+      const gltf = await new GLTFLoader().loadAsync('./RoBot.glb');
       const model = gltf.scene;
       
       model.scale.setScalar(2);
