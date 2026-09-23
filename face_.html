@@ -28,7 +28,7 @@
       const mindar = new MindARThree({ container: document.querySelector('#container') });
       const { renderer, scene, camera } = mindar;
 
-      // เริ่มการทำงานของ MindAR (จะเด้งขออนุญาตใช้กล้อง)
+      // เริ่มการทำงานของ MindAR (ขออนุญาตใช้กล้อง)
       await mindar.start();
 
       // สร้าง environment texture
@@ -41,8 +41,8 @@
       
       scene.add(new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1));
 
-      // แก้ไข URL โหลดโมเดลให้ถูกต้อง
-      const gltf = await new GLTFLoader().loadAsync('./RoBot_Head.glb');
+      // เปลี่ยนมาโหลดโมเดล RoBot.glb ตามที่ต้องการ
+      const gltf = await new GLTFLoader().loadAsync('./RoBot.glb');
       const model = gltf.scene;
       
       model.scale.setScalar(2);
