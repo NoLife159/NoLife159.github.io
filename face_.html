@@ -12,8 +12,8 @@
     } }
   </script>
   <style>
-    body { margin: 0; }
-    #container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    body { margin: 0; overflow: hidden; }
+    #container { width: 100vw; height: 100vh; position: relative; }
   </style>
 </head>
 <body>
@@ -24,39 +24,56 @@
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     import { MindARThree } from 'mindar-face-three';
 
-    const mindar = new MindARThree({ container: document.querySelector('#container') });
-    const { renderer, scene, camera } = mindar;
-    // สร้าง environment texture แบบห้องสตูดิโอ เพื่อเพิ่มแสงและเงาสะท้อนให้โมเดล
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    const roomEnvironment = new RoomEnvironment();
-    const environmentTarget = pmremGenerator.fromScene(roomEnvironment);
-    scene.environment = environmentTarget.texture;
-    roomEnvironment.dispose();
-    pmremGenerator.dispose();
-    scene.add(new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1));
-    const model = await new GLTFLoader().loadAsync('https://nolife159.github.io/RoBot_Head.glb');
-    
-    model.scene.scale.setScalar(2);
-    mindar.addAnchor(1).group.add(model.scene);
-    const meshes = [];
-    model.scene.traverse(object => {
-      if (object.isMesh && object.morphTargetDictionary && object.morphTargetInfluences) meshes.push(object);
-    });
+    async function start() {
+      const mindar = new MindARThree({ container: document.querySelector('#container') });
+      const { renderer, scene, camera } = mindar;
 
-    await mindar.start();
-    function animate() {
-      const categories = mindar.getLatestEstimate()?.blendshapes?.categories;
-      // จับคู่ชื่อ blendshape กับ morph target ของโมเดล เช่น jawOpen, eyeBlinkLeft
-      for (const mesh of meshes) {
-        for (const { categoryName, score } of categories ?? []) {
-          const index = mesh.morphTargetDictionary[categoryName];
-          if (index !== undefined) mesh.morphTargetInfluences[index] = score;
+      // เริ่มการทำงานของ MindAR (จะเด้งขออนุญาตใช้กล้อง)
+      await mindar.start();
+
+      // สร้าง environment texture
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      const roomEnvironment = new RoomEnvironment();
+      const environmentTarget = pmremGenerator.fromScene(roomEnvironment);
+      scene.environment = environmentTarget.texture;
+      roomEnvironment.dispose();
+      pmremGenerator.dispose();
+      
+      scene.add(new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1));
+
+      // แก้ไข URL โหลดโมเดลให้ถูกต้อง
+      const gltf = await new GLTFLoader().loadAsync('./RoBot_Head.glb');
+      const model = gltf.scene;
+      
+      model.scale.setScalar(2);
+      mindar.addAnchor(1).group.add(model);
+
+      const meshes = [];
+      model.traverse(object => {
+        if (object.isMesh && object.morphTargetDictionary && object.morphTargetInfluences) {
+          meshes.push(object);
         }
+      });
+
+      function animate() {
+        const categories = mindar.getLatestEstimate()?.blendshapes?.categories;
+        for (const mesh of meshes) {
+          for (const { categoryName, score } of categories ?? []) {
+            const index = mesh.morphTargetDictionary[categoryName];
+            if (index !== undefined) {
+              mesh.morphTargetInfluences[index] = score;
+            }
+          }
+        }
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
       }
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      animate();
     }
-    animate();
+
+    start().catch(err => {
+      console.error("Error starting app:", err);
+    });
   </script>
 </body>
 </html>
