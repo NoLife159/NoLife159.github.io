@@ -25,7 +25,11 @@
     import { MindARThree } from 'mindar-face-three';
 
     async function start() {
-      const mindar = new MindARThree({ container: document.querySelector('#container') });
+      // เพิ่ม facingMode: 'user' เพื่อให้คอมพิวเตอร์ใช้ Webcam กล้องหน้าได้
+      const mindar = new MindARThree({ 
+        container: document.querySelector('#container'),
+        facingMode: 'user'
+      });
       const { renderer, scene, camera } = mindar;
 
       // เริ่มการทำงานของ MindAR (ขออนุญาตใช้กล้อง)
