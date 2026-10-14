@@ -8,13 +8,14 @@
 
 <body>
 <a-scene
-  mindar-image="imageTargetSrc: https://aitutorialcourse.github.io/targets.mind;"
+  mindar-image="imageTargetSrc: https://aitutorialcourse.github.io/targets.mind; maxTrack: 5"
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false">
 
   <a-assets>
-    <a-asset-item id="model0" src="https://aitutorialcourse.github.io/epona.glb"></a-asset-item>
-
+    <a-asset-item id="model0" src="https://kipop488.github.io/cat_rigged_animation_run.glb"></a-asset-item>
+    <a-asset-item id="model1" src="https://cream2429.github.io/animated_elephant_character.glb"></a-asset-item>
+    <a-asset-item id="model2" src="https://jirajam.github.io/Puni.glb"></a-asset-item>
   </a-assets>
 
   <!-- Target 1 -->
@@ -24,12 +25,12 @@
 
   <!-- Target 2 -->
   <a-entity mindar-image-target="targetIndex: 1">
-    <a-gltf-model src="#model1" animation-mixer></a-gltf-model>
+    <a-gltf-model src="#model1" animation-mixer rotation="90 0 0" scale="2 2 2"></a-gltf-model>
   </a-entity>
 
   <!-- Target 3 -->
   <a-entity mindar-image-target="targetIndex: 2">
-    <a-gltf-model src="#model2" animation-mixer></a-gltf-model>
+    <a-gltf-model src="#model2" animation-mixer rotation="90 0 0" scale="2 2 2"></a-gltf-model>
   </a-entity>
 
   <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
